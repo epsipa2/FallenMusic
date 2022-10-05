@@ -1,33 +1,31 @@
+from pyrogram import Client
 from pyrogram.types import Message
-from pyrogram.enums import ChatType
 
-from FallenMusic import app
-from FallenMusic.Helpers.getid import get_file_id
+from config import BOT_USERNAME
+from helpers.filters import command
+from helpers.get_file_id import get_file_id
 
 
-@app.on_message(filters.command(["id", "stickerid", "stkid", "stckrid", f"id@{BOT_USERNAME}"]))
+@Client.on_message(command(["id", "stickerid", "stkid", "stckrid", f"id@{BOT_USERNAME}"]))
 async def showid(_, message: Message):
-    try:
-        await message.delete()
-    except:
-        pass
+    await message.delete()
     chat_type = message.chat.type
 
-    if chat_type == ChatType.PRIVATE:
+    if chat_type == "private":
         user_id = message.chat.id
-        await message.reply_text(f"`{user_id}`")
+        await message.reply_text(f"<code>{user_id}</code>")
 
-    elif chat_type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+    elif chat_type in ["group", "supergroup"]:
         _id = ""
-        _id += "**ᴄʜᴀᴛ ɪᴅ :** " f"`{message.chat.id}`\n"
+        _id += "<b>ᴄʜᴀᴛ ɪᴅ</b>: " f"<code>{message.chat.id}</code>\n"
         if message.reply_to_message:
             _id += (
-                "**ʀᴇᴩʟɪᴇᴅ ᴜsᴇʀ ɪᴅ :** "
-                f"`{message.reply_to_message.from_user.id}`\n"
+                "<b>ʀᴇᴩʟɪᴇᴅ ᴜsᴇʀ ɪᴅ</b>: "
+                f"<code>{message.reply_to_message.from_user.id}</code>\n"
             )
             file_info = get_file_id(message.reply_to_message)
         else:
-            _id += "**ᴜsᴇʀ ɪᴅ :** " f"`{message.from_user.id}`\n"
+            _id += "<b>ᴜsᴇʀ ɪᴅ</b>: " f"<code>{message.from_user.id}</code>\n"
             file_info = get_file_id(message)
         if file_info:
             _id += (
